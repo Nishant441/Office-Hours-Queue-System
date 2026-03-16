@@ -163,9 +163,7 @@ frontend/
 
 ## 📸 Demo Flow
 
-<!-- 👇 DRAG AND DROP YOUR DEMO VIDEO HERE 👇 -->
-[Drop your .mp4 or .mov video file here when editing on GitHub]
-<!-- 👆 END OF VIDEO 👆 -->
+https://github.com/user-attachments/assets/166f6855-8cb8-47f3-a25a-0267bce3b7e6
 
 ### 1. Register & Login
 - Create account with role selection
