@@ -400,14 +400,6 @@ This project demonstrates:
 - **DevOps** (Docker, CI/CD with GitHub Actions)
 - **Modern web development** (TypeScript, Tailwind, async/await)
 
-## 📝 Resume Bullet Points
-
-- Engineered **full-stack office hours management system** with FastAPI backend and React+TypeScript frontend, handling authentication, role-based dashboards, and ticket lifecycle management for 3 user roles
-- Built **ML-powered duplicate detection** using Sentence Transformers embeddings and PostgreSQL pgvector with cosine similarity search, reducing duplicate tickets by identifying semantically similar issues with >80% accuracy
-- Implemented **production-ready backend** with async SQLAlchemy 2.0, Alembic migrations, comprehensive test suite (15+ tests), JWT security, IDOR prevention, and CI/CD pipeline with GitHub Actions
-- Designed **React frontend** with TypeScript type safety, Context API state management, Axios interceptors, and Tailwind CSS, featuring visual similarity scoring UI with color-coded duplicate ranking
-- Optimized **vector similarity search** with IVFFlat indexing in pgvector, achieving sub-second query times on embeddings database with 500+ entries
-
 ## 📄 License
 
 MIT License - see LICENSE file for details
