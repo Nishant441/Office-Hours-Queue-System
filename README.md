@@ -163,6 +163,10 @@ frontend/
 
 ## 📸 Demo Flow
 
+<!-- 👇 DRAG AND DROP YOUR DEMO VIDEO HERE 👇 -->
+[Drop your .mp4 or .mov video file here when editing on GitHub]
+<!-- 👆 END OF VIDEO 👆 -->
+
 ### 1. Register & Login
 - Create account with role selection
 - JWT token stored in localStorage
