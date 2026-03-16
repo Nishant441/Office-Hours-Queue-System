@@ -388,17 +388,6 @@ POST   /api/v1/tickets/{id}/resolve # Resolve ticket (TA)
 GET    /api/v1/tickets/{id}/duplicates  # Get similar tickets
 ```
 
-## 🎓 Learning Outcomes
-
-This project demonstrates:
-- **Full-stack development** (React + FastAPI)
-- **Machine Learning integration** (Sentence Transformers + pgvector)
-- **Database design** (normalized schema, vector search)
-- **Authentication** (JWT, role-based access)
-- **State machines** (ticket lifecycle)
-- **Testing** (Pytest, unit + integration)
-- **DevOps** (Docker, CI/CD with GitHub Actions)
-- **Modern web development** (TypeScript, Tailwind, async/await)
 
 ## 📄 License
 
