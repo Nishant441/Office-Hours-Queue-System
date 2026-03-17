@@ -1,7 +1,5 @@
 # Office Hours Queue + Ticketing System
 
-[![CI](https://github.com/Nishant441/office-hours-queue/actions/workflows/ci.yml/badge.svg)](https://github.com/yourusername/office-hours-queue/actions)
-
 > A production-quality full-stack system for managing university office hours with **ML-powered duplicate ticket detection**
 
 ![OfficeHours_V1](https://github.com/user-attachments/assets/4aba2380-6b59-4f9c-953a-a1a14e4ed170)
