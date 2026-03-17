@@ -1,6 +1,6 @@
 # Office Hours Queue + Ticketing System
 
-[![CI](https://github.com/yourusername/office-hours-queue/actions/workflows/ci.yml/badge.svg)](https://github.com/yourusername/office-hours-queue/actions)
+[![CI](https://github.com/Nishant441/office-hours-queue/actions/workflows/ci.yml/badge.svg)](https://github.com/yourusername/office-hours-queue/actions)
 
 > A production-quality full-stack system for managing university office hours with **ML-powered duplicate ticket detection**
 
@@ -163,10 +163,6 @@ frontend/
 - **React Router** - Client-side routing
 - **Axios** - HTTP client
 - **Tailwind CSS** - Styling
-
-## 📸 Demo Flow
-
-https://github.com/user-attachments/assets/166f6855-8cb8-47f3-a25a-0267bce3b7e6
 
 ### 1. Register & Login
 - Create account with role selection
