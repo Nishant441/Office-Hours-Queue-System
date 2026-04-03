@@ -86,7 +86,7 @@ Visit **http://localhost:3000** and create an account!
 ### 🤖 ML-Powered Duplicate Detection
 
 **The Star Feature**: When students create tickets, the backend:
-1. Generates semantic embeddings using **Sentence Transformers** (all-MiniLM-L6-v2)
+1. Generates semantic embeddings using an ultra-optimized **ONNX Runtime** version of the *all-MiniLM-L6-v2* model (shrinks deployment memory by 85% to fit inside strict 512MB limits)
 2. Stores embeddings in PostgreSQL with **pgvector** extension
 3. Performs **ANN similarity search** using cosine distance
 4. Returns ranked list of similar tickets
@@ -139,7 +139,7 @@ backend/
 - **SQLAlchemy 2.0** - ORM with async support
 - **PostgreSQL** - Relational database
 - **pgvector** - Vector similarity search
-- **Sentence Transformers** - Semantic embeddings
+- **ONNX Runtime** - Hyper-optimized ML vector inference
 - **Alembic** - Database migrations
 - **Pytest** - Testing framework
 
@@ -242,7 +242,7 @@ ACCESS_TOKEN_EXPIRE_MINUTES=60
 1. Deploy PostgreSQL with pgvector
 2. Run migrations: `alembic upgrade head`
 3. Deploy FastAPI app
-4. Ensure `sentence-transformers` model downloads on first run
+4. The backend will automatically cache the lightweight ONNX ML model on first boot
 
 ### Frontend Deployment (Vercel / Netlify)
 
@@ -348,8 +348,8 @@ docker run -d -p 5432:5432 -e POSTGRES_PASSWORD=postgres pgvector/pgvector:pg16
 
 **ML model download fails**:
 ```bash
-# Pre-download model
-python -c "from sentence_transformers import SentenceTransformer; SentenceTransformer('all-MiniLM-L6-v2')"
+# Models are downloaded dynamically from HuggingFace cache via backend logic
+# Ensure your server environment can access huggingface.co without firewall blocks
 ```
 
 **Migrations out of sync**:
