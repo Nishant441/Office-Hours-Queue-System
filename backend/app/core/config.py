@@ -27,15 +27,27 @@ class Settings(BaseSettings):
     
     @property
     def async_database_url(self) -> str:
-        """Ensure the database URL uses the asyncpg driver and compatible SSL params."""
-        url = self.DATABASE_URL
-        if url.startswith("postgresql://"):
-            url = url.replace("postgresql://", "postgresql+asyncpg://", 1)
+        """Force use of asyncpg and handle both postgres:// and postgresql:// schemes."""
+        url = self.DATABASE_URL.strip()
         
-        # asyncpg compatibility: translate neon/standard params
-        # This allows users to paste standard 'sslmode=require' links
-        if "sslmode=require" in url:
-            url = url.replace("sslmode=require", "ssl=true")
+        # Handle both standard schemes
+        if url.startswith("postgres://"):
+            url = url.replace("postgres://", "postgresql+asyncpg://", 1)
+        elif url.startswith("postgresql://"):
+            url = url.replace("postgresql://", "postgresql+asyncpg://", 1)
+        elif not url.startswith("postgresql+asyncpg://"):
+            # Ensure the driver is present even if the scheme is weird
+            if "://" in url:
+                url = "postgresql+asyncpg://" + url.split("://", 1)[1]
+            else:
+                url = "postgresql+asyncpg://" + url
+                
+        # asyncpg compatibility: translate/strip incompatible params
+        url = url.replace("sslmode=require", "ssl=true")
+        url = url.replace("channel_binding=require", "")
+        
+        # Clean up URL formatting
+        url = url.replace("&&", "&").replace("?&", "?").rstrip("&").rstrip("?")
         
         return url
 
