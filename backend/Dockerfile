@@ -7,6 +7,7 @@ WORKDIR /backend
 RUN apt-get update && apt-get install -y \
     libpq-dev \
     gcc \
+    ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy requirements and install Python dependencies

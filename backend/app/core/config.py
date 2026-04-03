@@ -50,11 +50,7 @@ class Settings(BaseSettings):
     def ssl_connect_args(self) -> dict:
         """Return connect_args dict with SSL config if needed."""
         if "sslmode=require" in self.DATABASE_URL or "ssl" in self.DATABASE_URL:
-            import ssl as _ssl
-            ctx = _ssl.create_default_context()
-            ctx.check_hostname = False
-            ctx.verify_mode = _ssl.CERT_NONE
-            return {"ssl": ctx}
+            return {"ssl": "require"}
         return {}
 
     model_config = SettingsConfigDict(
