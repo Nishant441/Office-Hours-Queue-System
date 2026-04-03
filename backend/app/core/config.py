@@ -1,4 +1,6 @@
 """Pydantic settings for configuration management."""
+from urllib.parse import urlparse, urlunparse
+
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -27,29 +29,33 @@ class Settings(BaseSettings):
     
     @property
     def async_database_url(self) -> str:
-        """Force use of asyncpg and handle both postgres:// and postgresql:// schemes."""
+        """Build asyncpg-compatible URL: correct scheme, no query params.
+        
+        SSL is handled via connect_args in create_async_engine, not URL params.
+        """
         url = self.DATABASE_URL.strip()
         
-        # Handle both standard schemes
+        # Normalize scheme to postgresql+asyncpg://
         if url.startswith("postgres://"):
             url = url.replace("postgres://", "postgresql+asyncpg://", 1)
         elif url.startswith("postgresql://"):
             url = url.replace("postgresql://", "postgresql+asyncpg://", 1)
-        elif not url.startswith("postgresql+asyncpg://"):
-            # Ensure the driver is present even if the scheme is weird
-            if "://" in url:
-                url = "postgresql+asyncpg://" + url.split("://", 1)[1]
-            else:
-                url = "postgresql+asyncpg://" + url
-                
-        # asyncpg compatibility: translate/strip incompatible params
-        url = url.replace("sslmode=require", "ssl=true")
-        url = url.replace("channel_binding=require", "")
         
-        # Clean up URL formatting
-        url = url.replace("&&", "&").replace("?&", "?").rstrip("&").rstrip("?")
-        
-        return url
+        # Strip ALL query parameters — asyncpg can't handle sslmode/channel_binding
+        parsed = urlparse(url)
+        clean = parsed._replace(query="")
+        return urlunparse(clean)
+    
+    @property
+    def ssl_connect_args(self) -> dict:
+        """Return connect_args dict with SSL config if needed."""
+        if "sslmode=require" in self.DATABASE_URL or "ssl" in self.DATABASE_URL:
+            import ssl as _ssl
+            ctx = _ssl.create_default_context()
+            ctx.check_hostname = False
+            ctx.verify_mode = _ssl.CERT_NONE
+            return {"ssl": ctx}
+        return {}
 
     model_config = SettingsConfigDict(
         env_file=".env",
