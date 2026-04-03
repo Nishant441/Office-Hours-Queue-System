@@ -12,6 +12,18 @@ app = FastAPI(
     redoc_url="/redoc",
 )
 
+from fastapi import Request
+from fastapi.responses import JSONResponse
+import traceback
+
+@app.exception_handler(Exception)
+async def global_exception_handler(request: Request, exc: Exception):
+    return JSONResponse(
+        status_code=500,
+        content={"message": "Internal Server Error", "traceback": traceback.format_exc()},
+    )
+
+
 # Allowed origins: production + dev
 ALLOWED_ORIGINS = [
     "https://office-hours-queue-system.vercel.app",
