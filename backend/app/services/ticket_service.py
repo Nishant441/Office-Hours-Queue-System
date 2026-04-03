@@ -14,6 +14,7 @@ from app.models.enums import TicketStatus, TicketEventType
 from app.ai.embeddings import get_embedding_provider
 from app.ai.duplicate_finder import find_duplicates
 from app.schemas.ticket import DuplicateTicketResult
+from app.core.websocket import manager
 
 
 # State machine: valid transitions
@@ -33,6 +34,14 @@ class TicketService:
     def _get_utcnow() -> datetime:
         """Get current UTC time as naive datetime."""
         return datetime.now(timezone.utc).replace(tzinfo=None)
+
+    @staticmethod
+    async def _broadcast_ticket_update(ticket: Ticket):
+        """Broadcast ticket update to all session clients."""
+        await manager.broadcast(
+            ticket.session_id,
+            {"type": "TICKET_UPDATED", "ticket_id": str(ticket.id), "status": ticket.status.value},
+        )
 
 
     
@@ -117,6 +126,9 @@ class TicketService:
         await db.commit()
         await db.refresh(ticket)
         
+        # Broadcast update
+        await TicketService._broadcast_ticket_update(ticket)
+        
         # Find duplicates
         duplicates = await find_duplicates(db, ticket.id, student, top_k=5)
         
@@ -175,6 +187,10 @@ class TicketService:
         
         await db.commit()
         await db.refresh(ticket)
+        
+        # Broadcast update
+        await TicketService._broadcast_ticket_update(ticket)
+        
         return ticket
     
     @staticmethod
@@ -231,6 +247,10 @@ class TicketService:
         
         await db.commit()
         await db.refresh(ticket)
+        
+        # Broadcast update
+        await TicketService._broadcast_ticket_update(ticket)
+        
         return ticket
     
     @staticmethod
@@ -287,6 +307,10 @@ class TicketService:
         
         await db.commit()
         await db.refresh(ticket)
+        
+        # Broadcast update
+        await TicketService._broadcast_ticket_update(ticket)
+        
         return ticket
     
     @staticmethod
@@ -343,4 +367,8 @@ class TicketService:
         
         await db.commit()
         await db.refresh(ticket)
+        
+        # Broadcast update
+        await TicketService._broadcast_ticket_update(ticket)
+        
         return ticket

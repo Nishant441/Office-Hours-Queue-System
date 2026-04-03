@@ -57,12 +57,18 @@ Visit **http://localhost:3000** and create an account!
 - Role-based access control: **STUDENT**, **TA**, **ADMIN**
 - Protected routes and API endpoints
 
+### ⚡ Real-time Queue Updates
+- **Instant Status Sync**: When a TA claims or starts a ticket, the student's dashboard updates in real-time.
+- **WebSocket-Powered**: Uses persistent WebSocket connections to push updates from server to clients.
+- **Auto-Reconnection**: Frontend hook handles network drops and automatic reconnection.
+
 ### 🎓 Role-Based Workflows
 
 #### Students
 - Browse available courses
 - Join active office hours sessions
 - **Create support tickets** with duplicate detection
+- **Track ticket status in real-time** (WebSockets)
 - Track ticket status in real-time
 
 #### Teaching Assistants (TAs)
@@ -121,7 +127,8 @@ backend/
 │   │   ├── embedding/    # ML embeddings (Sentence Transformers)
 │   │   └── tickets/      # Ticket service with state machine
 │   ├── tests/            # Pytest test suite
-│   └── main.py           # FastAPI application
+│   ├── main.py           # FastAPI application
+│   └── core/websocket.py # Connection manager for push notifications
 ├── alembic/              # Database migrations
 ├── Dockerfile
 └── docker-compose.yml    # PostgreSQL + pgvector
@@ -143,6 +150,7 @@ frontend/
 │   ├── api/              # Type-safe API client
 │   ├── components/       # Reusable UI components
 │   ├── contexts/         # React Context (Auth)
+│   ├── hooks/            # Custom hooks (useWebSocket)
 │   ├── pages/            # Page components
 │   │   ├── LoginPage.tsx
 │   │   ├── DashboardPage.tsx
@@ -385,6 +393,8 @@ POST   /api/v1/tickets/{id}/claim   # Claim ticket (TA)
 POST   /api/v1/tickets/{id}/start   # Start work (TA)
 POST   /api/v1/tickets/{id}/resolve # Resolve ticket (TA)
 GET    /api/v1/tickets/{id}/duplicates  # Get similar tickets
+
+WS     /api/v1/ws/{session_id}      # Real-time update stream
 ```
 
 

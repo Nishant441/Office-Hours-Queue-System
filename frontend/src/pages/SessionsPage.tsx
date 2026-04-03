@@ -4,6 +4,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { sessionsAPI } from '../api/sessions';
 import { ticketsAPI } from '../api/tickets';
 import { coursesAPI } from '../api/courses';
+import { useWebSocket } from '../hooks/useWebSocket';
 import { OfficeHoursSession, Ticket, Course, SessionStats } from '../api/types';
 import { LoadingSpinner } from '../components/UI/LoadingSpinner';
 import { ErrorMessage } from '../components/UI/ErrorMessage';
@@ -23,6 +24,14 @@ export const SessionsPage: React.FC = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [showCreateSession, setShowCreateSession] = useState(false);
+
+    // WebSocket for real-time updates
+    useWebSocket(session?.id || null, (data) => {
+        if (data.type === 'TICKET_UPDATED') {
+            console.log('Real-time update received:', data);
+            refreshTickets();
+        }
+    });
 
     useEffect(() => {
         if (!courseId) {
