@@ -20,20 +20,27 @@ DEV_ORIGINS = [
     "http://localhost:3000",
 ]
 
-# If you have settings.cors_origins_list, include it too (safe)
-origins = []
-try:
-    origins = list(dict.fromkeys((getattr(settings, "cors_origins_list", []) or []) + DEV_ORIGINS))
-except Exception:
-    origins = DEV_ORIGINS
+# CORS Configuration
+origins = settings.cors_origins_list + DEV_ORIGINS
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+# If using '*' wildcard, allow_credentials must be False
+allow_all_origins = "*" in origins
+if allow_all_origins:
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=["*"],
+        allow_credentials=False,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
+else:
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=origins,
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
 
 # Include all v1 routes once
 app.include_router(api_router, prefix=settings.API_V1_PREFIX)
