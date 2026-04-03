@@ -12,35 +12,28 @@ app = FastAPI(
     redoc_url="/redoc",
 )
 
-# Dev CORS (allow both localhost + 127.0.0.1 so you don't get blocked)
-DEV_ORIGINS = [
+# Allowed origins: production + dev
+ALLOWED_ORIGINS = [
+    "https://office-hours-queue-system.vercel.app",
     "http://127.0.0.1:5173",
     "http://localhost:5173",
     "http://127.0.0.1:3000",
     "http://localhost:3000",
 ]
 
-# CORS Configuration
-origins = settings.cors_origins_list + DEV_ORIGINS
+# Also include any origins from the CORS_ORIGINS env var
+for origin in settings.cors_origins_list:
+    cleaned = origin.strip().rstrip("/")
+    if cleaned and cleaned not in ALLOWED_ORIGINS:
+        ALLOWED_ORIGINS.append(cleaned)
 
-# If using '*' wildcard, allow_credentials must be False
-allow_all_origins = "*" in origins
-if allow_all_origins:
-    app.add_middleware(
-        CORSMiddleware,
-        allow_origins=["*"],
-        allow_credentials=False,
-        allow_methods=["*"],
-        allow_headers=["*"],
-    )
-else:
-    app.add_middleware(
-        CORSMiddleware,
-        allow_origins=origins,
-        allow_credentials=True,
-        allow_methods=["*"],
-        allow_headers=["*"],
-    )
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=ALLOWED_ORIGINS,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # Include all v1 routes once
 app.include_router(api_router, prefix=settings.API_V1_PREFIX)

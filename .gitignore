@@ -42,7 +42,7 @@ Thumbs.db
 
 # ML models cache
 .cache/
-models/
+# models/  # This was incorrectly ignoring the backend/app/models folder
 
 # Docker
 *.log
