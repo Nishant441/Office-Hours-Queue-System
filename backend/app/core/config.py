@@ -25,6 +25,13 @@ class Settings(BaseSettings):
     PROJECT_NAME: str = "Office Hours Queue System"
     API_V1_PREFIX: str = "/api/v1"
     
+    @property
+    def async_database_url(self) -> str:
+        """Ensure the database URL uses the asyncpg driver."""
+        if self.DATABASE_URL.startswith("postgresql://"):
+            return self.DATABASE_URL.replace("postgresql://", "postgresql+asyncpg://", 1)
+        return self.DATABASE_URL
+
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",
