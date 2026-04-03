@@ -1,40 +1,30 @@
-"""Embedding provider using sentence-transformers."""
+"""Embedding provider using sentence-transformers (mocked for memory limits)."""
 from functools import lru_cache
-
-from sentence_transformers import SentenceTransformer
+import logging
 
 from app.core.config import settings
 
+logger = logging.getLogger(__name__)
 
 class EmbeddingProvider:
-    """Singleton wrapper for sentence-transformers model."""
+    """Mocked embedding provider to prevent Render OOM crashes."""
     
     _instance: "EmbeddingProvider | None" = None
-    _model: SentenceTransformer | None = None
     
     def __new__(cls):
         if cls._instance is None:
             cls._instance = super().__new__(cls)
         return cls._instance
     
-    def _load_model(self) -> SentenceTransformer:
-        """Lazy load the sentence-transformers model."""
-        if self._model is None:
-            self._model = SentenceTransformer(settings.EMBEDDING_MODEL_NAME)
-        return self._model
-    
     def encode(self, text: str) -> list[float]:
-        """Encode text into a vector embedding.
+        """Return a dummy embedding to prevent OOM on 512MB free instances.
         
-        Args:
-            text: Input text to encode
-            
-        Returns:
-            List of floats representing the embedding vector (384 dimensions)
+        Real ML models (PyTorch) consume >600MB of RAM. On Render's Free tier,
+        this causes the server to immediately crash. 
         """
-        model = self._load_model()
-        embedding = model.encode(text, normalize_embeddings=True)
-        return embedding.tolist()
+        # Return a zero vector of the expected dimension (384 for all-MiniLM-L6-v2)
+        logger.warning("Using mock embedding to prevent OOM crash. ML duplication is disabled.")
+        return [0.0] * 384
     
     def encode_ticket(
         self,
@@ -42,21 +32,7 @@ class EmbeddingProvider:
         description: str,
         topic_tag: str | None = None,
     ) -> list[float]:
-        """Encode a ticket into a vector embedding.
-        
-        Args:
-            title: Ticket title
-            description: Ticket description
-            topic_tag: Optional topic tag
-            
-        Returns:
-            List of floats representing the embedding vector
-        """
-        combined = f"{title}\n\n{description}"
-        if topic_tag:
-            combined = f"[{topic_tag}] {combined}"
-        
-        return self.encode(combined)
+        return self.encode(title)
 
 
 @lru_cache(maxsize=1)
