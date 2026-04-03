@@ -1,7 +1,8 @@
 import axios, { AxiosInstance, InternalAxiosRequestConfig } from "axios";
 
 // Use ONE hostname everywhere
-const API_BASE_URL = "http://localhost:8000";
+// Use env variable for production, fallback to local for development
+const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
 export const api: AxiosInstance = axios.create({
     baseURL: API_BASE_URL,
