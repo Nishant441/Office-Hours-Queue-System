@@ -27,10 +27,16 @@ class Settings(BaseSettings):
     
     @property
     def async_database_url(self) -> str:
-        """Ensure the database URL uses the asyncpg driver."""
+        """Ensure the database URL uses the asyncpg driver and compatible SSL params."""
         url = self.DATABASE_URL
         if url.startswith("postgresql://"):
             url = url.replace("postgresql://", "postgresql+asyncpg://", 1)
+        
+        # asyncpg compatibility: translate neon/standard params
+        # This allows users to paste standard 'sslmode=require' links
+        if "sslmode=require" in url:
+            url = url.replace("sslmode=require", "ssl=true")
+        
         return url
 
     model_config = SettingsConfigDict(
